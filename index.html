@@ -418,6 +418,46 @@
             margin-top: 17px;
         }
 
+
+        /* PROJECT DETAILS */
+        .project-card { display: flex; flex-direction: column; height: 100%; }
+        .project-content { display: flex; flex-direction: column; flex: 1; }
+        .project-content p { flex: 1; }
+        .project-detail-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            align-self: flex-start; margin-top: 14px; padding: 8px 13px;
+            border: 1px solid #666; border-radius: 7px; color: #fff;
+            background: transparent; font-size: 11px; font-weight: 600;
+            cursor: pointer; transition: .25s;
+        }
+        .project-detail-btn:hover { color: #111; background: #fff; border-color: #fff; }
+        .project-modal {
+            position: fixed; inset: 0; z-index: 999; display: none;
+            align-items: center; justify-content: center; padding: 20px;
+            background: rgba(0,0,0,.78); backdrop-filter: blur(8px);
+        }
+        .project-modal.show { display: flex; }
+        .project-modal-content {
+            position: relative; width: min(560px,100%); max-height: 85vh;
+            overflow-y: auto; padding: 28px; border: 1px solid #383838;
+            border-radius: 14px; background: #171717;
+            box-shadow: 0 20px 70px rgba(0,0,0,.5);
+        }
+        .project-modal-close {
+            position: absolute; top: 12px; right: 15px; width: 34px; height: 34px;
+            border: 1px solid #444; border-radius: 50%; color: #fff;
+            background: #222; font-size: 20px; cursor: pointer;
+        }
+        .project-modal-content h3 { margin: 8px 35px 12px 0; font-size: 22px; }
+        .project-modal-content p { margin-bottom: 16px; color: #bbb; font-size: 13px; line-height: 1.8; }
+        .project-modal-content h4 { margin: 18px 0 9px; font-size: 12px; color: #eee; }
+        .project-modal-tags { display: flex; flex-wrap: wrap; gap: 7px; }
+        .project-modal-tags span {
+            padding: 5px 10px; border: 1px solid #383838; border-radius: 20px;
+            color: #ddd; background: #242424; font-size: 10px;
+        }
+        @media (max-width: 650px) { .project-modal-content { padding: 23px 20px; } }
+
         /* EXPERIENCE */
 
         .experience-layout {
@@ -917,6 +957,7 @@
                             <span>Backend</span>
                             <span>Bootsrap5</span>
                         </div>
+                        <button class="project-detail-btn" type="button" data-project="cutika-web">View Details</button>
                     </div>
                 </article>
 
@@ -937,6 +978,7 @@
                             <span>Frontend</span>
                             <span>Bootsrap5</span>
                         </div>
+                        <button class="project-detail-btn" type="button" data-project="cutika-mobile">View Details</button>
                     </div>
                 </article>
 
@@ -956,6 +998,7 @@
                             <span>Laravel</span>
                             <span>Bootsrap5</span>
                         </div>
+                        <button class="project-detail-btn" type="button" data-project="sabita">View Details</button>
                     </div>
                 </article>
 
@@ -1013,30 +1056,23 @@
 
             <div class="contact-list">
 
-                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=haekalfatur13@gmail.com" target="_blank" rel="noopener noreferrer"
-    class="contact-card">
-    <span class="contact-icon">✉</span>
-    <div>
-        <strong>haekalfatur13@gmail.com</strong>
-        <small>Email Me</small>
-    </div>
-</a>
+                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=haekalfatur13@gmail.com"
+                    target="_blank" rel="noopener noreferrer" class="contact-card">
+                    <span class="contact-icon">✉</span>
+                    <div>
+                        <strong>haekalfatur13@gmail.com</strong>
+                        <small>Email Me</small>
+                    </div>
+                </a>
 
-                <a href="https://github.com/haekal" target="_blank" rel="noopener noreferrer" class="contact-card">
-    <span class="contact-icon">◉</span>
-    <div>
-        <strong>github.com/haekal</strong>
-        <small>GitHub Profile</small>
-    </div>
-</a>
-
-                <a href="https://github.com/frhaekall" target="_blank" rel="noopener noreferrer" class="contact-card">
-    <span class="contact-icon">◉</span>
-    <div>
-        <strong>github.com/frhaekall</strong>
-        <small>GitHub Profile</small>
-    </div>
-</a>
+                <a href="https://github.com/frhaekall" target="_blank"
+                    rel="noopener noreferrer" class="contact-card">
+                    <span class="contact-icon">◉</span>
+                    <div>
+                        <strong>github.com/frhaekall</strong>
+                        <small>GitHub Profile</small>
+                    </div>
+                </a>
 
             </div>
             </a>
@@ -1044,6 +1080,19 @@
         </div>
         </div>
     </section>
+
+
+    <!-- PROJECT DETAIL MODAL -->
+    <div class="project-modal" id="projectModal" aria-hidden="true">
+        <div class="project-modal-content" role="dialog" aria-modal="true" aria-labelledby="projectModalTitle">
+            <button class="project-modal-close" id="projectModalClose" type="button" aria-label="Tutup">&times;</button>
+            <span class="eyebrow">Project Details</span>
+            <h3 id="projectModalTitle"></h3>
+            <p id="projectModalDescription"></p>
+            <h4>Technologies</h4>
+            <div class="project-modal-tags" id="projectModalTags"></div>
+        </div>
+    </div>
 
     <!-- FOOTER -->
     <footer class="footer">
@@ -1073,6 +1122,62 @@
 
             const menuToggle = document.getElementById('menuToggle');
             const navLinks = document.getElementById('navLinks');
+
+
+            /* PROJECT DETAIL MODAL */
+            const projectDetails = {
+                'cutika-web': {
+                    title: 'CUTIKA - Cuti Karyawan',
+                    description: 'Sistem informasi pengelolaan cuti pegawai Kantor Kelurahan Meruya Selatan. Project ini merupakan aplikasi berbasis web untuk kebutuhan pengelolaan cuti karyawan.',
+                    technologies: ['Laravel', 'Backend', 'Bootstrap 5']
+                },
+                'cutika-mobile': {
+                    title: 'CUTIKA Mobile',
+                    description: 'Aplikasi e-cuti untuk pegawai PPSU dan RPTRA Kantor Kelurahan Meruya Selatan. Aplikasi mobile ini menjadi pendamping sistem CUTIKA untuk pengajuan dan informasi cuti pegawai.',
+                    technologies: ['Laravel API', 'Flutter', 'Frontend']
+                },
+                'sabita': {
+                    title: 'SABITA - Posyandu Digital',
+                    description: 'Sistem pelayanan Posyandu Digital yang dikembangkan sebagai project website berbasis Laravel.',
+                    technologies: ['Laravel', 'Bootstrap 5']
+                }
+            };
+
+            const projectModal = document.getElementById('projectModal');
+            const projectModalTitle = document.getElementById('projectModalTitle');
+            const projectModalDescription = document.getElementById('projectModalDescription');
+            const projectModalTags = document.getElementById('projectModalTags');
+            const projectModalClose = document.getElementById('projectModalClose');
+
+            function closeProjectModal() {
+                projectModal.classList.remove('show');
+                projectModal.setAttribute('aria-hidden', 'true');
+            }
+
+            document.querySelectorAll('.project-detail-btn').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    const project = projectDetails[button.dataset.project];
+                    if (!project) return;
+                    projectModalTitle.textContent = project.title;
+                    projectModalDescription.textContent = project.description;
+                    projectModalTags.innerHTML = '';
+                    project.technologies.forEach(function(technology) {
+                        const tag = document.createElement('span');
+                        tag.textContent = technology;
+                        projectModalTags.appendChild(tag);
+                    });
+                    projectModal.classList.add('show');
+                    projectModal.setAttribute('aria-hidden', 'false');
+                });
+            });
+
+            projectModalClose.addEventListener('click', closeProjectModal);
+            projectModal.addEventListener('click', function(event) {
+                if (event.target === projectModal) closeProjectModal();
+            });
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') closeProjectModal();
+            });
 
             /* =================================
                MOBILE NAVIGATION
